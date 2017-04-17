@@ -8,7 +8,7 @@ import (
 
 func TestNew(t *testing.T) {
 
-	ms := New(t)
-	require.Nil(t, ms.server, "for now, server must be nil")
+	ms := New(t, true, true)
+	require.NotNil(t, ms.server, "server must be instantiated")
 
 }
