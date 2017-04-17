@@ -28,6 +28,19 @@ func dumpServerRequest(r *http.Request, printBody bool) error {
 	return nil
 }
 
+// ClientDumpResponse dump response from server
+func ClientDumpResponse(r *http.Response, printBody bool) error {
+	dump, err := httputil.DumpResponse(r, printBody)
+	if err != nil {
+		return err
+	}
+	begin := color.BlueString("client.response.begin")
+	end := color.BlueString("client.response.end")
+	fmt.Printf("[%s]\n%s\n[%s]\n", begin, dump, end)
+
+	return nil
+}
+
 // New create a MockServer instance
 func New(t *testing.T, dumpRequest bool, dumpBody bool) MockServer {
 
