@@ -16,10 +16,14 @@ type MockServer struct {
 	server *httptest.Server
 	t      *testing.T
 	get    map[string]GetHandler
+	post   map[string]PostHandler
 }
 
 // GetHandler Server GET handler
 type GetHandler func(w http.ResponseWriter, r *http.Request)
+
+// PostHandler Server POST handler
+type PostHandler func(w http.ResponseWriter, r *http.Request)
 
 func dumpServerRequest(r *http.Request, printBody bool) error {
 	dump, err := httputil.DumpRequest(r, printBody)
@@ -55,8 +59,9 @@ func ServerDumpRequest(r *http.Request, printBody bool) error {
 func New(t *testing.T, dumpRequest bool, dumpBody bool) MockServer {
 
 	ms := MockServer{
-		t:   t,
-		get: map[string]GetHandler{},
+		t:    t,
+		get:  map[string]GetHandler{},
+		post: map[string]PostHandler{},
 	}
 
 	ms.server = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -72,6 +77,10 @@ func New(t *testing.T, dumpRequest bool, dumpBody bool) MockServer {
 			callback, ok := ms.get[r.URL.Path]
 			require.Equal(ms.t, ok, true, fmt.Sprintf("could not found GET handler for: %s", r.URL.Path))
 			callback(w, r)
+		case "POST":
+			callback, ok := ms.post[r.URL.Path]
+			require.Equal(ms.t, ok, true, fmt.Sprintf("could not found POST handler for: %s", r.URL.Path))
+			callback(w, r)
 		default:
 			require.Fail(t, fmt.Sprintf("http method not found: %s", r.Method))
 		}
@@ -83,4 +92,9 @@ func New(t *testing.T, dumpRequest bool, dumpBody bool) MockServer {
 // AddGetHandler add GET handler to specific path
 func (ms *MockServer) AddGetHandler(path string, handler GetHandler) {
 	ms.get[path] = handler
+}
+
+// AddPostHandler add POST handler to specific path
+func (ms *MockServer) AddPostHandler(path string, handler PostHandler) {
+	ms.post[path] = handler
 }
