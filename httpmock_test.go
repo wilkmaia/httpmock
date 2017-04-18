@@ -22,11 +22,11 @@ func TestGet(t *testing.T) {
 		ServerDumpRequest(r, true)
 	})
 
-	resp, err := http.Get(ms.server.URL + "/test")
+	resp, err := http.Get(ms.GetURL("/test"))
 	require.NoError(t, err, "server are not fine :(")
 	require.NoError(t, ClientDumpResponse(resp, true), "response are not ok :(")
 
-	ms.server.Close()
+	ms.Close()
 }
 
 func TestAddGetHandler(t *testing.T) {
@@ -35,11 +35,11 @@ func TestAddGetHandler(t *testing.T) {
 		ServerDumpRequest(r, true)
 	})
 
-	resp, err := http.Get(ms.server.URL + "/test")
+	resp, err := http.Get(ms.GetURL("/test"))
 	require.NoError(t, err, "server are not fine :(")
 	require.NoError(t, ClientDumpResponse(resp, true), "response are not ok :(")
 
-	ms.server.Close()
+	ms.Close()
 }
 
 func TestAddPostHandler(t *testing.T) {
@@ -52,9 +52,9 @@ func TestAddPostHandler(t *testing.T) {
 		require.Equal(t, "test123", string(body), "unexpected body :/")
 	})
 
-	resp, err := http.Post(ms.server.URL+"/test", "text/plain", bytes.NewBufferString("test123"))
+	resp, err := http.Post(ms.GetURL("/test"), "text/plain", bytes.NewBufferString("test123"))
 	require.NoError(t, err, "server are not fine :(")
 	require.NoError(t, ClientDumpResponse(resp, true), "response are not ok :(")
 
-	ms.server.Close()
+	ms.Close()
 }

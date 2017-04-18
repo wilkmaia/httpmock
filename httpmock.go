@@ -89,6 +89,16 @@ func New(t *testing.T, dumpRequest bool, dumpBody bool) MockServer {
 	return ms
 }
 
+// GetURL return URL for given endpoint
+func (ms *MockServer) GetURL(endpoint string) string {
+	return fmt.Sprintf("%s%s", ms.server.URL, endpoint)
+}
+
+// Close close httptest.Server
+func (ms *MockServer) Close() {
+	ms.server.Close()
+}
+
 // AddGetHandler add GET handler to specific path
 func (ms *MockServer) AddGetHandler(path string, handler GetHandler) {
 	ms.get[path] = handler
